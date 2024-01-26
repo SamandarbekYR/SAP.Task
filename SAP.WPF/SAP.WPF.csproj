@@ -1,0 +1,18 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="LiveCharts.Wpf" Version="0.9.7" />
+    <PackageReference Include="MaterialDesignColors" Version="3.0.0-ci508" />
+    <PackageReference Include="MaterialDesignThemes" Version="5.0.0-ci508" />
+    <PackageReference Include="MaterialDesignThemes.MahApps" Version="3.0.0-ci508" />
+  </ItemGroup>
+
+</Project>
