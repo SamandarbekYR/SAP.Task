@@ -1,10 +1,21 @@
+using Microsoft.Extensions.Hosting;
 using SAP.API.Services.Interfaces;
 using SAP.API.Services.Service;
+using Serilog.Events;
+using Serilog;
 using StackExchange.Redis;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+
+var logger = new LoggerConfiguration()
+        .MinimumLevel.Debug()
+        .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
+        .Enrich.FromLogContext()
+        .WriteTo.File("Files/logs/log-.txt", rollingInterval: RollingInterval.Day)
+        .CreateLogger();
+builder.Host.UseSerilog(logger);
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

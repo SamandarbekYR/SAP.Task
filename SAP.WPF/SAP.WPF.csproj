@@ -15,4 +15,12 @@
     <PackageReference Include="MaterialDesignThemes.MahApps" Version="3.0.0-ci508" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\SAP.API\SAP.API.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Entities\" />
+  </ItemGroup>
+
 </Project>

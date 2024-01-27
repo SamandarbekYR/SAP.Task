@@ -19,13 +19,13 @@ namespace SAP.API.Controllers
         {
             try
             {
-                List<Rate> res = await _service.GetAll(id, startDate, endDate);
+                List<Rate> res = await _service.GetAll(id, DateTime.Parse(startDate),DateTime.Parse(endDate));
                 return Ok(res);
             }
             catch (Exception ex)
             {
                 // Log the exception or handle it accordingly
-                return StatusCode(500, "Internal Server Error");
+                return StatusCode(400, "Malumotlar nato'g'ri kiritildi");
             }
         }
 

@@ -6,13 +6,18 @@ namespace SAP.API.Services.Service
     public class RedisService : IRedis
     {
         private IDistributedCache _cache;
+        private ILogger<RedisService> _logger;
 
-        public RedisService(IDistributedCache cache)
+        public RedisService(IDistributedCache cache, ILogger<RedisService> logger)
         {
             this._cache = cache;
+            this._logger = logger;
         }
         public async Task DeleteAsync(string key)
-            => await _cache.RemoveAsync(key);
+        {
+            _logger.LogInformation("Cachedan malumotlar tozalanmoqda ...");
+            await _cache.RemoveAsync(key);
+        }
 
         public async Task<string?> GetString(string key)
             => await _cache.GetStringAsync(key);
@@ -22,6 +27,6 @@ namespace SAP.API.Services.Service
             {
                 AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(24),
                 SlidingExpiration = TimeSpan.FromMinutes(1)
-            }); 
+            });
     }
 }

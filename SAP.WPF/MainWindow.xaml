@@ -59,13 +59,13 @@
                                        Foreground="White"
                                        Text="Начальная дата"/>
 
-                            <DatePicker Margin="0"
+                            <DatePicker x:Name="ToDate"
+                                        Margin="0"
                                         Style="{DynamicResource MaterialDesignOutlinedDatePicker}"
                                         FontSize="16"
                                         MaxWidth="220"
                                         Background="White"
                                         FontFamily="JetBrains Mono"
-                                        IsEnabled="True"
                                         VerticalAlignment="Bottom"
                                         BorderThickness="0"
                                         materialDesign:TextFieldAssist.HasOutlinedTextField="True"
@@ -95,7 +95,8 @@
                                    Margin="2 0 0 0"
                                    Foreground="White"
                                    Text="Конечная дата"/>
-                        <DatePicker Margin="0"
+                        <DatePicker x:Name="FromDate"
+                                    Margin="0"
                                     Style="{DynamicResource MaterialDesignOutlinedDatePicker}"
                                     FontSize="16"
                                     MaxWidth="220"
@@ -119,13 +120,15 @@
                                    Margin="2 0 0 0"
                                    Foreground="White"
                                    Text="Валюта"/>
-                        <ComboBox Background="White" 
+                        <ComboBox x:Name="CMBSelectValyuta"
+                                  Background="White" 
                                   Style="{DynamicResource MaterialDesignOutlinedComboBox}"
                                   FontFamily="JetBrains Mono"
-                                  FontSize="16">
-                            <ComboBoxItem Style="{DynamicResource MaterialDesignNavigationSecondaryListBoxItem}" IsSelected="True" Content="USD"/>
-                            <ComboBoxItem Style="{DynamicResource MaterialDesignNavigationSecondaryListBoxItem}" Content="UZS"/>
-                            <ComboBoxItem Style="{DynamicResource MaterialDesignNavigationSecondaryListBoxItem}" Content="RUB"/>
+                                  FontSize="16"
+                                  >
+                            <ComboBoxItem Style="{DynamicResource MaterialDesignNavigationSecondaryListBoxItem}" IsSelected="True" Content="USD" TabIndex="431"/>
+                            <ComboBoxItem Style="{DynamicResource MaterialDesignNavigationSecondaryListBoxItem}" Content="EUR" TabIndex="451"/>
+                            <ComboBoxItem Style="{DynamicResource MaterialDesignNavigationSecondaryListBoxItem}" Content="RUB" TabIndex="456"/>
                         </ComboBox>
                     </StackPanel>
                 </Border>
@@ -133,7 +136,8 @@
                 <Border Grid.Column="5" 
                         Margin="35 25 25 0"
                         VerticalAlignment="Center" >
-                    <Button Style="{DynamicResource MaterialDesignRaisedSecondaryLightButton}"
+                    <Button Click="btnSendRequest"
+                            Style="{DynamicResource MaterialDesignRaisedSecondaryLightButton}"
                             Background="White"
                             Content="Получить"
                             VerticalAlignment="Bottom"
