@@ -13,10 +13,12 @@
     <PackageReference Include="MaterialDesignColors" Version="3.0.0-ci508" />
     <PackageReference Include="MaterialDesignThemes" Version="5.0.0-ci508" />
     <PackageReference Include="MaterialDesignThemes.MahApps" Version="3.0.0-ci508" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\SAP.API\SAP.API.csproj" />
+    <ProjectReference Include="..\SAP.Service\SAP.Service.csproj" />
   </ItemGroup>
 
   <ItemGroup>

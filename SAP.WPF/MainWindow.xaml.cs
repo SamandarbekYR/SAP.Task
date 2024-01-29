@@ -1,16 +1,14 @@
 ﻿using LiveCharts.Wpf;
 using MahApps.Metro.Controls;
-using SAP.API.Entities.Rates;
+using SAP.API.Services;
 using SAP.API.Services.Interfaces;
 using SAP.API.Services.Service;
-using System.IO;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
-
 namespace SAP.WPF
 {
     /// <summary>
@@ -19,55 +17,44 @@ namespace SAP.WPF
     public partial class MainWindow : Window
     {
         public RateService _rate;
-        public IRedis _redis;
+        public 
         public MainWindow()
         {
             InitializeComponent();
             var state = Properties.Settings.Default.WindowS;
             WindowState = state == 1 ? WindowState.Maximized : WindowState.Normal;
         }
+        
         private async void btnShutDown(object sender, RoutedEventArgs e)
+        {
+            await AppShutDown();
+            Application.Current.Shutdown();
+        }
+        public async Task AppShutDown()
         {
             try
             {
-                string path = "..\\..\\..\\Files\\Data.json";
-                if (!File.Exists(path))
-                {
-                    File.Create(path);
-                }
-                else
-                {
-                    var res = await _redis.GetString("testkey");
-                    File.WriteAllText(path, res);
-                }
-                if (ToDate.SelectedDate != null && FromDate.SelectedDate != null && CMBSelectValyuta.SelectedItem != null)
-                {
+                if (FromDate.SelectedDate is not null)
                     Properties.Settings.Default.EndDate = FromDate.SelectedDate.Value;
+                if (ToDate.SelectedDate is not null)
                     Properties.Settings.Default.StartDate = ToDate.SelectedDate.Value;
-                    if (WindowState == WindowState.Normal)
-                    {
-                        Properties.Settings.Default.WindowS = 2;
-                    }
-                    else if (WindowState == WindowState.Maximized)
-                    {
-                        Properties.Settings.Default.WindowS = 1;
-                    }
-
-
-                    Properties.Settings.Default.Save();
+                if (WindowState == WindowState.Normal)
+                {
+                    Properties.Settings.Default.WindowS = 2;
                 }
                 else
                 {
-                    MessageBox.Show("Ba'zi qiymatlar bo'sh (null). Ma'lumotlar saqlanmadi.");
+                    Properties.Settings.Default.WindowS = 1;
                 }
-                Application.Current.Shutdown();
+                Properties.Settings.Default.Save();
+
+                
             }
             catch (Exception ex)
             {
                 // Istisno bilan ishlash
                 MessageBox.Show($"Xatolik: {ex.Message}");
             }
-
         }
 
         private void btnNormal(object sender, RoutedEventArgs e)
@@ -155,7 +142,6 @@ namespace SAP.WPF
 
             try
             {
-
                 if (DateTime.TryParse(FromDate.SelectedDate?.ToString(), out DateTime fromDate) &&
                     DateTime.TryParse(ToDate.SelectedDate?.ToString(), out DateTime toDate))
                 {

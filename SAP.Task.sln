@@ -5,7 +5,9 @@ VisualStudioVersion = 17.8.34330.188
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SAP.WPF", "SAP.WPF\SAP.WPF.csproj", "{DE2469DB-8736-4AE6-B0AC-9B0C6E38C593}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SAP.API", "SAP.API\SAP.API.csproj", "{40F73E16-DF77-49F9-937B-2B5FEADF77C1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SAP.API", "SAP.API\SAP.API.csproj", "{40F73E16-DF77-49F9-937B-2B5FEADF77C1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SAP.Service", "SAP.Service\SAP.Service.csproj", "{17C0FFA8-5CF5-48A2-A219-40B0FDAEF12A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{40F73E16-DF77-49F9-937B-2B5FEADF77C1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{40F73E16-DF77-49F9-937B-2B5FEADF77C1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{40F73E16-DF77-49F9-937B-2B5FEADF77C1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{17C0FFA8-5CF5-48A2-A219-40B0FDAEF12A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{17C0FFA8-5CF5-48A2-A219-40B0FDAEF12A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{17C0FFA8-5CF5-48A2-A219-40B0FDAEF12A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{17C0FFA8-5CF5-48A2-A219-40B0FDAEF12A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,6 +1,7 @@
-﻿using Newtonsoft.Json;
-using SAP.API.Entities.Rates;
+﻿using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using SAP.API.Services.Interfaces;
+using System.Net.Http.Json;
 using System.Security.Cryptography.Xml;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
@@ -12,38 +13,11 @@ namespace SAP.API.Services.Service
         private ILogger<RateService> _logger;
         private IRedis _redis;
 
-
         public RateService(IRedis redis, ILogger<RateService> logger)
         {
             _logger = logger;
             _redis = redis;
-
-            //lifetime.ApplicationStopping.Register(async () => await OnStopping());
         }
-
-
-        // Bu hozircha ishlatilmayapti To'g'irlaydigon joylari bor
-        private async Task OnStopping()
-        {
-            try
-            {
-                Console.WriteLine("Stop ishlamoqdamanlfjoefhriug3rpog5rhgh59g99ih");
-                string filePath = "C:\\Users\\Samandar\\Desktop\\SAP.Task\\SAP.API\\Files\\Cache\\Cache.json"; // Fayl manzili
-                var data = await _redis.GetString(CACHE_KEY);
-
-                if (data != null)
-                {
-                    await File.WriteAllTextAsync(filePath, data);
-                    await _redis.DeleteAsync(CACHE_KEY);
-                    Console.WriteLine("Stop ishlamoqdamanlfjoefhriug3rpog5rhgh59g99ih");
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error handling file: {ex.Message}");
-            }
-        }
-
 
         public async Task<string> AddCacheAsync(int Cur_ID, DateTime startDate, DateTime endDate)
         {
@@ -97,12 +71,15 @@ namespace SAP.API.Services.Service
                 {
                     // Oldingi cache bilan yangi qo'shayotgan cache listimizni bir biriga qo'shish
                     List<Rate> addList = entityList.Concat(list).ToList();
-                    
+
                     // 2 ta listni birlashtirganimizda duplicate lar paydo bo'lishi mumkun
                     // shuning uchun duplicatelarni o'chiramiz
-                    List<Rate> uniqueDataList = addList.GroupBy(obj => obj.Date)
-                                                       .Select(group => group.First())
-                                                       .ToList();
+                    List<Rate> uniqueDataList = addList
+                                                     .GroupBy(obj => new { obj.Cur_ID, obj.Date })
+                                                     .GroupBy(group => group.Key.Date)  // Guruhlarni ikkita bosqichda guruhlash
+                                                     .SelectMany(group => group.Select(g => g.First()))
+                                                     .ToList();
+
 
                     // List ni jsonga formatlash
                     var json1 = JsonConvert.SerializeObject(uniqueDataList, Newtonsoft.Json.Formatting.Indented);
@@ -140,7 +117,7 @@ namespace SAP.API.Services.Service
                                                 .ToList();
                     if(entityList is null || entityList.Count() == 0)
                     {
-                         await AddCacheAsync(Cur_ID, startDate, endDate);
+                         await AddCacheAsync(Cur_ID, startDate, endDate.AddDays(1));
                          return await GetAllInfoAsync(Cur_ID, startDate, endDate);
                     }
                     if (entityList != null)
@@ -185,7 +162,7 @@ namespace SAP.API.Services.Service
             {
                 var data1 = await _redis.GetString(CACHE_KEY);
                 List<Rate> entityList = JsonConvert.DeserializeObject<List<Rate>>(data1!)!
-                                       .Where(c => c.Cur_ID == Cur_ID && (c.Date.AddDays(1) > startDate && c.Date < endDate.AddDays(1)))
+                                       .Where(c => c.Cur_ID == Cur_ID && (c.Date.AddDays(1)> startDate && c.Date < endDate.AddDays(1)))
                                        .ToList();
                 
                 return entityList;

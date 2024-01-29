@@ -1,5 +1,4 @@
-﻿using SAP.API.Entities.Rates;
-
+﻿
 namespace SAP.API.Services.Interfaces
 {
     public interface IRate

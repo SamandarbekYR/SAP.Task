@@ -15,7 +15,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Files\logs\" />
+    <Folder Include="Files\Logs\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\SAP.Service\SAP.Service.csproj" />
   </ItemGroup>
 
 </Project>

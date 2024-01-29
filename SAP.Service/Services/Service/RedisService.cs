@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Caching.Distributed;
+using Microsoft.Extensions.Logging;
 using SAP.API.Services.Interfaces;
-
 namespace SAP.API.Services.Service
 {
     public class RedisService : IRedis
