@@ -1,6 +1,8 @@
 ﻿using Newtonsoft.Json;
 using SAP.API.Entities.Rates;
 using SAP.API.Services.Interfaces;
+using System.Security.Cryptography.Xml;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace SAP.API.Services.Service
 {
@@ -14,7 +16,7 @@ namespace SAP.API.Services.Service
         public RateService(IRedis redis, ILogger<RateService> logger)
         {
             _logger = logger;
-            _redis = redis ?? throw new ArgumentNullException(nameof(redis));
+            _redis = redis;
 
             //lifetime.ApplicationStopping.Register(async () => await OnStopping());
         }
@@ -95,9 +97,15 @@ namespace SAP.API.Services.Service
                 {
                     // Oldingi cache bilan yangi qo'shayotgan cache listimizni bir biriga qo'shish
                     List<Rate> addList = entityList.Concat(list).ToList();
+                    
+                    // 2 ta listni birlashtirganimizda duplicate lar paydo bo'lishi mumkun
+                    // shuning uchun duplicatelarni o'chiramiz
+                    List<Rate> uniqueDataList = addList.GroupBy(obj => obj.Date)
+                                                       .Select(group => group.First())
+                                                       .ToList();
 
                     // List ni jsonga formatlash
-                    var json1 = JsonConvert.SerializeObject(addList, Newtonsoft.Json.Formatting.Indented);
+                    var json1 = JsonConvert.SerializeObject(uniqueDataList, Newtonsoft.Json.Formatting.Indented);
                     await _redis.SetAsync(CACHE_KEY, json1);
 
                     return json1;
@@ -114,7 +122,7 @@ namespace SAP.API.Services.Service
             }
             catch (Exception ex)
             {
-                _logger.LogWarning($"Xatolik yuz berdi {ex}");
+                _logger.LogWarning($"Cachega qo'shishda xatolik yuz berdi {ex}");
 
                 return "Xatolik yuz berdi";
             }
@@ -122,11 +130,10 @@ namespace SAP.API.Services.Service
 
         public async Task<List<Rate>> GetAll(int Cur_ID, DateTime startDate, DateTime endDate)
         {
-
             try
             {
                 var data1 = await _redis.GetString(CACHE_KEY);
-                if (string.IsNullOrWhiteSpace(data1) && data1 != null)
+                if (!string.IsNullOrWhiteSpace(data1) && data1 != null)
                 {
                     List<Rate> entityList = JsonConvert.DeserializeObject<List<Rate>>(data1)!
                                                 .Where(c => c.Cur_ID == Cur_ID)
@@ -173,8 +180,12 @@ namespace SAP.API.Services.Service
             {
                 var data1 = await _redis.GetString(CACHE_KEY);
                 List<Rate> entityList = JsonConvert.DeserializeObject<List<Rate>>(data1!)!
-                                       .Where(c => c.Cur_ID == Cur_ID && (c.Date >= startDate || c.Date <= endDate))
+                                       .Where(c => c.Cur_ID == Cur_ID && (c.Date.AddDays(1) > startDate && c.Date < endDate.AddDays(1)))
                                        .ToList();
+                foreach (var item in entityList)
+                {
+                    var a = item.Date;
+                }
                 return entityList;
             }
             catch (Exception ex)

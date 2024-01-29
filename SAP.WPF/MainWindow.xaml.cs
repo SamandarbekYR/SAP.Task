@@ -1,4 +1,6 @@
-﻿using SAP.API.Entities.Rates;
+﻿using LiveCharts.Wpf;
+using MahApps.Metro.Controls;
+using SAP.API.Entities.Rates;
 using SAP.API.Services.Service;
 using System.Net.Http;
 using System.Net.Http.Json;
@@ -18,28 +20,41 @@ namespace SAP.WPF
         public MainWindow()
         {
             InitializeComponent();
-            //  PopulateChartData();
+            var state = Properties.Settings.Default.WindowS;
+            WindowState = state == 1 ? WindowState.Maximized : WindowState.Normal;
         }
-        //        // C# tilida
-        //        public void PopulateChartData()
-        //        {
-        //            List<DateTime> dates = new List<DateTime>() {
-        //                           DateTime.ParseExact("2022-24-10", "yyyy-dd-MM", CultureInfo.InvariantCulture),
-        //                           DateTime.ParseExact("2022-25-10", "yyyy-dd-MM", CultureInfo.InvariantCulture),
-        //                           DateTime.ParseExact("2022-26-10", "yyyy-dd-MM", CultureInfo.InvariantCulture)
-        //};
-
-        //            var chart = chart1;
-
-        //            var xAxis = chart.AxisX.First();
-
-
-        //            xAxis.Labels = dates.Select(date => date.ToString("yyyy-MM-dd")).ToList();
-        //        }
-
         private void btnShutDown(object sender, RoutedEventArgs e)
         {
-            Application.Current.Shutdown();
+            try
+            {
+                if (ToDate.SelectedDate != null && FromDate.SelectedDate != null && CMBSelectValyuta.SelectedItem != null)
+                {
+                    Properties.Settings.Default.EndDate = FromDate.SelectedDate.Value;
+                    Properties.Settings.Default.StartDate = ToDate.SelectedDate.Value;
+                    if(WindowState == WindowState.Normal)
+                    {
+                        Properties.Settings.Default.WindowS = 2;
+                    }
+                    else if(WindowState == WindowState.Maximized)
+                    {
+                        Properties.Settings.Default.WindowS = 1;
+                    }
+
+                    
+                    Properties.Settings.Default.Save();
+                }
+                else
+                {
+                    MessageBox.Show("Ba'zi qiymatlar bo'sh (null). Ma'lumotlar saqlanmadi.");
+                }
+                Application.Current.Shutdown();
+            }
+            catch (Exception ex)
+            {
+                // Istisno bilan ishlash
+                MessageBox.Show($"Xatolik: {ex.Message}");
+            }
+
         }
 
         private void btnNormal(object sender, RoutedEventArgs e)
@@ -96,6 +111,10 @@ namespace SAP.WPF
                         List<Rate>? result = await response.Content.ReadFromJsonAsync<List<Rate>>()!;
                         if (result != null)
                             return result;
+                        else
+                        {
+                            MessageBox.Show("Siz bergan vaqt oraliqda ma'lumotlar topilmadi");
+                        }
                     }
                     else
                     {
@@ -106,63 +125,85 @@ namespace SAP.WPF
             }
             catch (Exception ex)
             {
+                MessageBox.Show($"Malumot kiritishda xatolik yuz berdi {ex}");
                 return new List<Rate>();
             }
         }
 
-        private async Task btnSendRequest1()
+        private LiveCharts.Wpf.LineSeries GetSeller_post_dg()
         {
+            return seller_post_dg;
+        }
+
+        private async Task btnSendRequest1(LiveCharts.Wpf.LineSeries seller_post_dg)
+        {
+            btnSendRequestName.IsEnabled = false;
+            seller_post_dg.Values.Clear();
+
             try
             {
-                DateTime fromDate;
-                DateTime toDate;
 
-                if (DateTime.TryParse(FromDate.SelectedDate.ToString(), out fromDate) &&
-                    DateTime.TryParse(ToDate.SelectedDate.ToString(), out toDate))
+                if (DateTime.TryParse(FromDate.SelectedDate?.ToString(), out DateTime fromDate) &&
+                    DateTime.TryParse(ToDate.SelectedDate?.ToString(), out DateTime toDate))
                 {
-                    //bu sanadan kichik sanada ma'lumotlar yo'q
-                    string minDate = "2021-07-09";
-                    DateTime MinDate = DateTime.Parse(minDate);
+                    // Minimum date condition
+                    DateTime minDate = DateTime.Parse("2021-07-09");
 
-                    if (ToDate.SelectedDate >= MinDate)
+                    if (toDate >= minDate)
                     {
                         if (CMBSelectValyuta.SelectedItem is ComboBoxItem selectedItem)
                         {
                             int Cur_ID = Convert.ToInt32(selectedItem.TabIndex);
-                            DateTime toDate1 = DateTime.Parse(ToDate.SelectedDate.ToString()!);
-                            DateTime fromDate1 = DateTime.Parse(FromDate.SelectedDate.ToString()!);
 
-                            List<Rate> info = await GetAll(Cur_ID, toDate1, fromDate1);
+                            List<Rate> info = await GetAll(Cur_ID, toDate, fromDate);
 
-                            List<DateTime> dates = new List<DateTime>();
+                            List<DateTime> dates = info.Select(rate => rate.Date).ToList();
 
-                            foreach (Rate rate in info)
+                            await Task.Run(() =>
                             {
-                                dates.Add(rate.Date);
-                            }
+                                Axis xAxis = null;
+                                chart1.BeginInvoke(() =>
+                                {
+                                    xAxis = chart1.AxisX.First();
+                                    xAxis.Labels = dates.Select(date => date.ToString("yyyy-MM-dd")).ToList();
 
-                            var chart = chart1;
-                            var xAxis = chart.AxisX.First();
-                            xAxis.Labels = dates.Select(date => date.ToString("yyyy-MM-dd")).ToList();
+                                    foreach (var i in info)
+                                    {
+                                        seller_post_dg.Values.Add(Convert.ToDouble(i.Cur_OfficialRate));
+                                    }
+                                });
 
-                            foreach (var i in info)
-                            {
-                                seller_post_dg.Values.Add(Convert.ToDouble(i.Cur_OfficialRate));
-                            }
-                        };
+                                // Minimum value condition
+                                //if (seller_post_dg.Values.Any())
+                                //{
+                                //    double minValue = seller_post_dg.Values.Min();
+                                //    var minPoint = seller_post_dg.Points.FirstOrDefault(p => p.Y == minValue);
+                                //    if (minPoint != null)
+                                //        minPoint.Stroke = Brushes.Green;
+                                //}
+                            });
+                            SolidColorBrush DangerBrush = new SolidColorBrush(Colors.Red);
+                        }
                     }
+                }
+                else
+                {
+                    MessageBox.Show("Siz noto'g'ri ma'lumot kiritdingiz", "Xatolik", MessageBoxButton.OK, MessageBoxImage.Warning);
                 }
             }
             catch (Exception ex)
             {
-
+                // Handle the exception appropriately
+                MessageBox.Show($"{ex}");
+            }
+            finally
+            {
+                btnSendRequestName.IsEnabled = true;
             }
         }
-
-
         private async void btnSendRequest(object sender, RoutedEventArgs e)
         {
-            await btnSendRequest1();
+            await btnSendRequest1(GetSeller_post_dg());
         }
     }
 }
