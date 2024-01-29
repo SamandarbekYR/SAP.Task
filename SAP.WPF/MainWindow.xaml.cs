@@ -1,7 +1,9 @@
 ﻿using LiveCharts.Wpf;
 using MahApps.Metro.Controls;
 using SAP.API.Entities.Rates;
+using SAP.API.Services.Interfaces;
 using SAP.API.Services.Service;
+using System.IO;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Windows;
@@ -17,30 +19,41 @@ namespace SAP.WPF
     public partial class MainWindow : Window
     {
         public RateService _rate;
+        public IRedis _redis;
         public MainWindow()
         {
             InitializeComponent();
             var state = Properties.Settings.Default.WindowS;
             WindowState = state == 1 ? WindowState.Maximized : WindowState.Normal;
         }
-        private void btnShutDown(object sender, RoutedEventArgs e)
+        private async void btnShutDown(object sender, RoutedEventArgs e)
         {
             try
             {
+                string path = "..\\..\\..\\Files\\Data.json";
+                if (!File.Exists(path))
+                {
+                    File.Create(path);
+                }
+                else
+                {
+                    var res = await _redis.GetString("testkey");
+                    File.WriteAllText(path, res);
+                }
                 if (ToDate.SelectedDate != null && FromDate.SelectedDate != null && CMBSelectValyuta.SelectedItem != null)
                 {
                     Properties.Settings.Default.EndDate = FromDate.SelectedDate.Value;
                     Properties.Settings.Default.StartDate = ToDate.SelectedDate.Value;
-                    if(WindowState == WindowState.Normal)
+                    if (WindowState == WindowState.Normal)
                     {
                         Properties.Settings.Default.WindowS = 2;
                     }
-                    else if(WindowState == WindowState.Maximized)
+                    else if (WindowState == WindowState.Maximized)
                     {
                         Properties.Settings.Default.WindowS = 1;
                     }
 
-                    
+
                     Properties.Settings.Default.Save();
                 }
                 else

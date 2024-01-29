@@ -13,7 +13,7 @@ var logger = new LoggerConfiguration()
         .MinimumLevel.Debug()
         .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
         .Enrich.FromLogContext()
-        .WriteTo.File("Files/logs/log-.txt", rollingInterval: RollingInterval.Day)
+        .WriteTo.File("Filaes/logs/log-.txt", rollingInterval: RollingInterval.Day)
         .CreateLogger();
 builder.Host.UseSerilog(logger);
 

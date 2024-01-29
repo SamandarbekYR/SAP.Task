@@ -138,6 +138,11 @@ namespace SAP.API.Services.Service
                     List<Rate> entityList = JsonConvert.DeserializeObject<List<Rate>>(data1)!
                                                 .Where(c => c.Cur_ID == Cur_ID)
                                                 .ToList();
+                    if(entityList is null || entityList.Count() == 0)
+                    {
+                         await AddCacheAsync(Cur_ID, startDate, endDate);
+                         return await GetAllInfoAsync(Cur_ID, startDate, endDate);
+                    }
                     if (entityList != null)
                     {
                         DateTime minDate = entityList.Min(date => date.Date);
@@ -182,10 +187,7 @@ namespace SAP.API.Services.Service
                 List<Rate> entityList = JsonConvert.DeserializeObject<List<Rate>>(data1!)!
                                        .Where(c => c.Cur_ID == Cur_ID && (c.Date.AddDays(1) > startDate && c.Date < endDate.AddDays(1)))
                                        .ToList();
-                foreach (var item in entityList)
-                {
-                    var a = item.Date;
-                }
+                
                 return entityList;
             }
             catch (Exception ex)
