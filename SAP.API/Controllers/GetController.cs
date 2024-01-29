@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using SAP.API.Services;
 using SAP.API.Services.Interfaces;
-using System.Formats.Asn1;
 
 namespace SAP.API.Controllers
 {
@@ -12,7 +11,7 @@ namespace SAP.API.Controllers
         private IRate _service;
         private ILogger<GetController> _logger;
         private IRedis _redis;
-       
+
         public GetController(IRate _service, ILogger<GetController> logger, IRedis redis)
         {
             this._service = _service;
@@ -34,13 +33,31 @@ namespace SAP.API.Controllers
                 return StatusCode(400, "Malumotlar nato'g'ri kiritildi");
             }
         }
-        [HttpGet("key")]
+        [HttpGet("cache-to-file")]
         public async Task<ActionResult<string?>?> GetAll(string key)
         {
             var list = await _redis.GetString(key);
             return list;
         }
-        
+        [HttpPost("file-to-cache")]
+        public async Task<ActionResult<List<string>>> SetCache(string key, List<string> info)
+        {
+            try
+            {
+                if (info is not null)
+                {
+                    await _redis.SetAsync(key, info.ToString()!);
+                    _logger.LogInformation($"Filedagi ma'lumotlar cachega saqlandi");
+                }
+                return Ok(info);
+            }
+            catch(Exception ex)
+            {
+                _logger.LogWarning($"Filedagi ma'lumotlar cachga saqlashda xatolik yuz berdi {ex}");
+                return new List<string>();
+            }
+        }
+
 
     }
 }

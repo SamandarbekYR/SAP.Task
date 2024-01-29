@@ -2,7 +2,7 @@
 using MahApps.Metro.Controls;
 using SAP.API.Services;
 using SAP.API.Services.Interfaces;
-using SAP.API.Services.Service;
+using SAP.Service.Services.Service;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Windows;
@@ -16,15 +16,20 @@ namespace SAP.WPF
     /// </summary>
     public partial class MainWindow : Window
     {
-        public RateService _rate;
-        public 
-        public MainWindow()
+        public  MainWindow()
         {
             InitializeComponent();
+            AppOpen();
+        }
+        
+        public void AppOpen()
+        {
+            FileWorker _fileWorker = new FileWorker();
+
+             _fileWorker.FileToCache();
             var state = Properties.Settings.Default.WindowS;
             WindowState = state == 1 ? WindowState.Maximized : WindowState.Normal;
         }
-        
         private async void btnShutDown(object sender, RoutedEventArgs e)
         {
             await AppShutDown();
@@ -47,8 +52,11 @@ namespace SAP.WPF
                     Properties.Settings.Default.WindowS = 1;
                 }
                 Properties.Settings.Default.Save();
+                // Dastur boshida
+                FileWorker _fileWorker = new FileWorker();
 
-                
+                await _fileWorker.CacheToFile();
+
             }
             catch (Exception ex)
             {
