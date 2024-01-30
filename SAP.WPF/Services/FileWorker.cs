@@ -59,8 +59,9 @@ namespace SAP.Service.Services.Service
                 client.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("text/plain"));
                 client.DefaultRequestHeaders.TryAddWithoutValidation("Content-Type", "application/json");
 
+                var list = File.ReadAllText(path)!;
                 // Request data directly from the file
-                StringContent content = new StringContent(File.ReadAllText(path), System.Text.Encoding.UTF8, "application/json");
+                StringContent content = new StringContent(list, System.Text.Encoding.UTF8, "application/json");
 
                 // Send POST request
                 HttpResponseMessage response = await client.PostAsync(apiUrl, content);

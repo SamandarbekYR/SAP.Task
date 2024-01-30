@@ -167,62 +167,63 @@
                             PreviewMouseUp="Button_PreviewMouseUp"/>
                 </Border>
             </Grid>
-           <Grid Grid.Row="2" 
-                  Margin="10">
-                <!--Main chart section-->
-                <lvc:CartesianChart x:Name="chart1" 
-                            Margin="10 40 10 10" 
-                            LegendLocation="None" >
-                    <lvc:CartesianChart.DataTooltip>
-                        <lvc:DefaultTooltip  
-                                    Background="Red" 
-                                    Foreground="#ffffff" 
-                                    BulletSize="6" 
-                                    Opacity="0.5"/>
-                    </lvc:CartesianChart.DataTooltip>
-                    
-                    <lvc:CartesianChart.AxisX>
-                        <lvc:Axis MinValue="0"
-                                  Foreground="#90a3b2" 
-                                  ShowLabels="True">
-                            <lvc:Axis.Separator>
-                                <lvc:Separator StrokeThickness="1" 
-                                               Step="1"
-                                               Stroke="Aqua"/>
-                            </lvc:Axis.Separator>
-                            
-                        </lvc:Axis>
-                    </lvc:CartesianChart.AxisX>
-                    
-                    <lvc:CartesianChart.AxisY>
-                        <lvc:Axis Foreground="#90a3b2" 
-                                  ShowLabels="True" 
-                                  MinValue="0" 
-                                  MaxValue="10" >
-                            <lvc:Axis.Separator>
-                                <lvc:Separator StrokeThickness="0.1" 
-                                               Step="0.5"/>
-                            </lvc:Axis.Separator>
-                        </lvc:Axis>
-                    </lvc:CartesianChart.AxisY>
-             
-                    <lvc:CartesianChart.Series>
-                        <lvc:LineSeries x:Name="seller_post_dg"
-                                Opacity="0.1"
-                                Fill="#7B3AB8" 
-                                StrokeThickness="2"
-                                PointGeometrySize="8"
-                                Values="0"
-                                >
-                            <lvc:LineSeries.Stroke>
-                                <SolidColorBrush Color="#BF6199" />
-                            </lvc:LineSeries.Stroke>
-                        </lvc:LineSeries>
+            <ScrollViewer Grid.Row="2" Margin="10" 
+                          VerticalScrollBarVisibility="Auto"
+                          HorizontalScrollBarVisibility="Auto">
+                <Grid Grid.Row="2" 
+                      >
+                    <!--Main chart section-->
+                    <lvc:CartesianChart x:Name="chart1" 
+                                        Margin="10 40 10 10" 
+                                        LegendLocation="None" >
+                        <lvc:CartesianChart.DataTooltip>
+                            <lvc:DefaultTooltip  
+                                 Background="Red" 
+                                 Foreground="#ffffff" 
+                                 BulletSize="6" 
+                                 Opacity="0.5"/>
+                        </lvc:CartesianChart.DataTooltip>
 
-                    </lvc:CartesianChart.Series>
+                        <lvc:CartesianChart.AxisX>
+                            <lvc:Axis MinValue="0"
+                                      Foreground="#90a3b2" 
+                                      ShowLabels="True">
+                                <lvc:Axis.Separator>
+                                    <lvc:Separator StrokeThickness="1" 
+                                    Step="1"
+                                    Stroke="Aqua"/>
+                                </lvc:Axis.Separator>
+                            </lvc:Axis>
+                        </lvc:CartesianChart.AxisX>
+                        <lvc:CartesianChart.AxisY>
+                            <lvc:Axis Foreground="#90a3b2" 
+                                      ShowLabels="True" 
+                                      MinValue="0" 
+                                      MaxValue="10" >
+                                <lvc:Axis.Separator>
+                                    <lvc:Separator StrokeThickness="0.1" 
+                                    Step="0.5"/>
+                                </lvc:Axis.Separator>
+                            </lvc:Axis>
+                        </lvc:CartesianChart.AxisY>
+                        <lvc:CartesianChart.Series>
+                            <lvc:LineSeries x:Name="seller_post_dg"
+                                            Opacity="0.1"
+                                            Fill="#7B3AB8" 
+                                            StrokeThickness="2"
+                                            PointGeometrySize="8"
+                                            Values="0"
+                                            >
+                                <lvc:LineSeries.Stroke>
+                                    <SolidColorBrush Color="#BF6199" />
+                                </lvc:LineSeries.Stroke>
+                            </lvc:LineSeries>
 
-                </lvc:CartesianChart>
-            </Grid>
+                        </lvc:CartesianChart.Series>
+
+                    </lvc:CartesianChart>
+                </Grid>
+            </ScrollViewer>
         </Grid>
     </Border>
 </Window>

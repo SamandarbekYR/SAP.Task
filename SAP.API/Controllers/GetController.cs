@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using SAP.API.Services;
 using SAP.API.Services.Interfaces;
 
@@ -40,13 +41,13 @@ namespace SAP.API.Controllers
             return list;
         }
         [HttpPost("file-to-cache")]
-        public async Task<ActionResult<List<string>>> SetCache(string key, List<string> info)
+        public async Task<ActionResult<List<Rate>>> SetCache(string key, List<Rate> info)
         {
             try
             {
                 if (info is not null)
                 {
-                    await _redis.SetAsync(key, info.ToString()!);
+                    await _redis.SetAsync(key, JsonConvert.SerializeObject(info,Formatting.Indented)!);
                     _logger.LogInformation($"Filedagi ma'lumotlar cachega saqlandi");
                 }
                 return Ok(info);
@@ -54,7 +55,7 @@ namespace SAP.API.Controllers
             catch(Exception ex)
             {
                 _logger.LogWarning($"Filedagi ma'lumotlar cachga saqlashda xatolik yuz berdi {ex}");
-                return new List<string>();
+                return new List<Rate>();
             }
         }
 

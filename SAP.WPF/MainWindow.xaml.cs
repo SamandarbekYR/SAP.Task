@@ -20,8 +20,8 @@ namespace SAP.WPF
         {
             InitializeComponent();
             AppOpen();
+           // MessageBox.Show($"{DateTime.UtcNow.AddHours(5):yyyy-MM-dd}");
         }
-        
         public void AppOpen()
         {
             FileWorker _fileWorker = new FileWorker();
@@ -153,10 +153,11 @@ namespace SAP.WPF
                 if (DateTime.TryParse(FromDate.SelectedDate?.ToString(), out DateTime fromDate) &&
                     DateTime.TryParse(ToDate.SelectedDate?.ToString(), out DateTime toDate))
                 {
+                     string maxD = $"{DateTime.UtcNow.AddHours(5):yyyy-MM-dd}";
                     // Minimum date condition
                     DateTime minDate = DateTime.Parse("2021-07-09");
 
-                    if (toDate >= minDate)
+                    if (toDate >= minDate && toDate<=fromDate && fromDate<= DateTime.Parse(maxD))
                     {
                         if (CMBSelectValyuta.SelectedItem is ComboBoxItem selectedItem)
                         {
@@ -192,16 +193,21 @@ namespace SAP.WPF
                             SolidColorBrush DangerBrush = new SolidColorBrush(Colors.Red);
                         }
                     }
+                    else
+                    {
+                        MessageBox.Show("Kun tanlashda xatolik yuz berdi bu kunda ma'lumotlar yo'q", "Information", 
+                                   MessageBoxButton.OK, MessageBoxImage.Information);
+                    }
                 }
                 else
                 {
-                    MessageBox.Show("Siz noto'g'ri ma'lumot kiritdingiz", "Xatolik", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    MessageBox.Show("Siz noto'g'ri ma'lumot kiritdingiz", "Xatolik", 
+                               MessageBoxButton.OK, MessageBoxImage.Warning);
                 }
             }
             catch (Exception ex)
             {
-                // Handle the exception appropriately
-                MessageBox.Show($"{ex}");
+                MessageBox.Show($"Xatolik yuz berdi: {ex.Message}");
             }
             finally
             {
