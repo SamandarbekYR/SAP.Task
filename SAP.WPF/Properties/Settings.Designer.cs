@@ -58,10 +58,10 @@ namespace SAP.WPF.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string Valyuta {
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int Valyuta {
             get {
-                return ((string)(this["Valyuta"]));
+                return ((int)(this["Valyuta"]));
             }
             set {
                 this["Valyuta"] = value;

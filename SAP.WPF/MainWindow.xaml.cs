@@ -1,7 +1,6 @@
 ﻿using LiveCharts.Wpf;
 using MahApps.Metro.Controls;
 using SAP.API.Services;
-using SAP.API.Services.Interfaces;
 using SAP.Service.Services.Service;
 using System.Net.Http;
 using System.Net.Http.Json;
@@ -16,17 +15,20 @@ namespace SAP.WPF
     /// </summary>
     public partial class MainWindow : Window
     {
-        public  MainWindow()
+        public MainWindow()
         {
             InitializeComponent();
             AppOpen();
-           // MessageBox.Show($"{DateTime.UtcNow.AddHours(5):yyyy-MM-dd}");
+            // MessageBox.Show($"{DateTime.UtcNow.AddHours(5):yyyy-MM-dd}");
         }
         public void AppOpen()
         {
             FileWorker _fileWorker = new FileWorker();
+            _fileWorker.FileToCache();
 
-             _fileWorker.FileToCache();
+            ToDate.SelectedDate = Properties.Settings.Default.StartDate;
+            FromDate.SelectedDate = Properties.Settings.Default.EndDate;
+            CMBSelectValyuta.SelectedIndex = Properties.Settings.Default.Valyuta;
             var state = Properties.Settings.Default.WindowS;
             WindowState = state == 1 ? WindowState.Maximized : WindowState.Normal;
         }
@@ -51,12 +53,21 @@ namespace SAP.WPF
                 {
                     Properties.Settings.Default.WindowS = 1;
                 }
-                Properties.Settings.Default.Save();
-                // Dastur boshida
-                FileWorker _fileWorker = new FileWorker();
+                if (CMBSelectValyuta.SelectedItem != null)
+                {
+                    if (CMBSelectValyuta.SelectedItem is ComboBoxItem selectedItem)
+                    {
+                        int tabIndex = selectedItem.TabIndex;
+                        Properties.Settings.Default.Valyuta = tabIndex == 431 ? 0 :
+                                                              tabIndex == 451 ? 1 : 2;
+                    }
+                    Properties.Settings.Default.Save();
+                    // Dastur boshida
+                    FileWorker _fileWorker = new FileWorker();
 
-                await _fileWorker.CacheToFile();
+                    await _fileWorker.CacheToFile();
 
+                }
             }
             catch (Exception ex)
             {
@@ -153,11 +164,11 @@ namespace SAP.WPF
                 if (DateTime.TryParse(FromDate.SelectedDate?.ToString(), out DateTime fromDate) &&
                     DateTime.TryParse(ToDate.SelectedDate?.ToString(), out DateTime toDate))
                 {
-                     string maxD = $"{DateTime.UtcNow.AddHours(5):yyyy-MM-dd}";
+                    string maxD = $"{DateTime.UtcNow.AddHours(5):yyyy-MM-dd}";
                     // Minimum date condition
                     DateTime minDate = DateTime.Parse("2021-07-09");
 
-                    if (toDate >= minDate && toDate<=fromDate && fromDate<= DateTime.Parse(maxD))
+                    if (toDate >= minDate && toDate <= fromDate && fromDate <= DateTime.Parse(maxD))
                     {
                         if (CMBSelectValyuta.SelectedItem is ComboBoxItem selectedItem)
                         {
@@ -195,13 +206,13 @@ namespace SAP.WPF
                     }
                     else
                     {
-                        MessageBox.Show("Kun tanlashda xatolik yuz berdi bu kunda ma'lumotlar yo'q", "Information", 
+                        MessageBox.Show("Kun tanlashda xatolik yuz berdi bu kunda ma'lumotlar yo'q", "Information",
                                    MessageBoxButton.OK, MessageBoxImage.Information);
                     }
                 }
                 else
                 {
-                    MessageBox.Show("Siz noto'g'ri ma'lumot kiritdingiz", "Xatolik", 
+                    MessageBox.Show("Siz noto'g'ri ma'lumot kiritdingiz", "Xatolik",
                                MessageBoxButton.OK, MessageBoxImage.Warning);
                 }
             }
