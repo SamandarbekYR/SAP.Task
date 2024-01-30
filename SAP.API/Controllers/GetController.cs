@@ -58,7 +58,5 @@ namespace SAP.API.Controllers
                 return new List<Rate>();
             }
         }
-
-
     }
 }
